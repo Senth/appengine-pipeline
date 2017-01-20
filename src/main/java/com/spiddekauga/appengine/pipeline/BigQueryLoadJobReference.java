@@ -1,31 +1,30 @@
 package com.spiddekauga.appengine.pipeline;
 
-import java.io.Serializable;
-
 import com.google.api.services.bigquery.model.JobReference;
 import com.google.appengine.tools.mapreduce.Marshallers;
 import com.google.appengine.tools.mapreduce.impl.util.SerializableValue;
+
+import java.io.Serializable;
 
 /**
  * Result of the bigquery load files pipeline job.
  */
 @SuppressWarnings("javadoc")
 public class BigQueryLoadJobReference implements Serializable {
+private static final long serialVersionUID = -5045977572520245900L;
+private final String mStatus;
+private final SerializableValue<JobReference> mJobReference;
 
-	private static final long serialVersionUID = -5045977572520245900L;
-	private final String status;
-	private final SerializableValue<JobReference> jobReference;
+public BigQueryLoadJobReference(String status, JobReference jobReference) {
+	mStatus = status;
+	mJobReference = SerializableValue.of(Marshallers.getGenericJsonMarshaller(JobReference.class), jobReference);
+}
 
-	public BigQueryLoadJobReference(String status, JobReference jobReference) {
-		this.status = status;
-		this.jobReference = SerializableValue.of(Marshallers.getGenericJsonMarshaller(JobReference.class), jobReference);
-	}
+public String getStatus() {
+	return mStatus;
+}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public JobReference getJobReference() {
-		return jobReference.getValue();
-	}
+public JobReference getJobReference() {
+	return mJobReference.getValue();
+}
 }

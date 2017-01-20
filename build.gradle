@@ -22,6 +22,8 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    compile "com.google.appengine.tools:appengine-gcs-client:0.4.4"
-    compile "com.google.appengine.tools:appengine-mapreduce:0.8.3"
+    compile project(':appengine-utils')
+    compile "com.esotericsoftware:kryo:3.0.1"
+    compile "com.google.appengine.tools:appengine-gcs-client:0.6"
+    compile "com.google.appengine.tools:appengine-mapreduce:0.8.5"
 }
