@@ -9,7 +9,7 @@ import com.google.appengine.api.datastore.ShortBlob;
 /**
  * Serialize Datastore {@link ShortBlob}
  */
-public class ShortBlobSerializer extends Serializer<ShortBlob> {
+class ShortBlobSerializer extends Serializer<ShortBlob> {
 @Override
 public void write(Kryo kryo, Output output, ShortBlob object) {
 	if (object != null) {

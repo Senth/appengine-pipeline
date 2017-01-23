@@ -16,7 +16,7 @@ import java.util.List;
  * Backup configuration for datastore backups
  */
 public class DatastoreBackupConfig implements Serializable {
-public static final SimpleDateFormat DAY_FORMAT = Time.createIsoDateFormat();
+private static final SimpleDateFormat DAY_FORMAT = Time.createIsoDateFormat();
 private static final int SHARDS_PER_QUERY_DEFAULT = 5;
 private String mGcsBucketName = AppIdentityServiceFactory.getAppIdentityService().getDefaultGcsBucketName();
 private String mPrefixDirectory = "datastore_backup/";
@@ -26,28 +26,39 @@ private int mShardsPerQuery = SHARDS_PER_QUERY_DEFAULT;
 private MapSettings mMapSettings = null;
 private JobSetting[] mJobSettings = null;
 
-public String getGcsBucketName() {
+String getGcsBucketName() {
 	return mGcsBucketName;
 }
 
-public String getPrefixDirectory() {
+String getPrefixDirectory() {
 	return mPrefixDirectory + mDayDirectory;
 }
 
-public List<String> getBackupTables() {
+List<String> getBackupTables() {
 	return mBackupTables;
 }
 
-public int getShardsPerQuery() {
+int getShardsPerQuery() {
 	return mShardsPerQuery;
 }
 
-public MapSettings getMapSettings() {
+MapSettings getMapSettings() {
 	return mMapSettings;
 }
 
-public JobSetting[] getJobSettings() {
-	return mJobSettings;
+/**
+ * @param additionalSettings additional (and optional) job settings
+ */
+public JobSetting[] getJobSettings(JobSetting... additionalSettings) {
+	if (additionalSettings.length == 0) {
+		return mJobSettings;
+	} else {
+		JobSetting[] combinedSettings = new JobSetting[additionalSettings.length + mJobSettings.length];
+		System.arraycopy(mJobSettings, 0, combinedSettings, 0, mJobSettings.length);
+		int offset = mJobSettings.length;
+		System.arraycopy(additionalSettings, 0, combinedSettings, offset, additionalSettings.length);
+		return combinedSettings;
+	}
 }
 
 public static class Builder {
