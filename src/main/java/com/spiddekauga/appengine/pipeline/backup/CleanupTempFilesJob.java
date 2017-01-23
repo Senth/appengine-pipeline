@@ -6,7 +6,6 @@ import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.ListItem;
 import com.google.appengine.tools.cloudstorage.ListOptions;
 import com.google.appengine.tools.cloudstorage.ListResult;
-import com.google.appengine.tools.cloudstorage.RetryParams;
 import com.google.appengine.tools.pipeline.Job0;
 import com.google.appengine.tools.pipeline.Value;
 
@@ -18,7 +17,7 @@ import java.util.regex.Pattern;
  */
 class CleanupTempFilesJob extends Job0<Void> {
 private static final Pattern TEMP_FILE_PATTERN = Pattern.compile(".+~.*");
-private static final GcsService mGcsService = GcsServiceFactory.createGcsService(RetryParams.getDefaultInstance());
+private static final GcsService mGcsService = GcsServiceFactory.createGcsService();
 private DatastoreBackupConfig mConfig;
 
 CleanupTempFilesJob(DatastoreBackupConfig config) {
@@ -28,7 +27,7 @@ CleanupTempFilesJob(DatastoreBackupConfig config) {
 @Override
 public Value<Void> run() throws Exception {
 	ListOptions listOptions = new ListOptions.Builder()
-			.setPrefix(mConfig.getPrefixDirectory())
+			.setPrefix(mConfig.getBackupDirectory())
 			.setRecursive(false)
 			.build();
 	ListResult listResult = mGcsService.list(mConfig.getGcsBucketName(), listOptions);

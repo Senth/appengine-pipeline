@@ -7,7 +7,7 @@ import com.google.appengine.tools.mapreduce.MapOnlyMapper;
 /**
  * Deletes all results from the datastore query
  */
-public class DatastoreDeleteMapper extends MapOnlyMapper<Entity, Void> {
+class DatastoreDeleteMapper extends MapOnlyMapper<Entity, Void> {
 private transient DatastoreMutationPool mDatastorePool = null;
 
 @Override

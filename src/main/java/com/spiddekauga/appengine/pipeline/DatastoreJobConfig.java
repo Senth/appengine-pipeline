@@ -21,19 +21,30 @@ private List<String> mTables = new ArrayList<>();
 private DatastoreJobConfig() {
 }
 
-public int getShardsPerQuery() {
+int getShardsPerQuery() {
 	return mShardsPerQuery;
 }
 
-public MapSettings getMapSettings() {
+MapSettings getMapSettings() {
 	return mMapSettings;
 }
 
-public JobSetting[] getJobSettings() {
-	return mJobSettings;
+/**
+ * @param additionalSettings additional (and optional) job settings
+ */
+public JobSetting[] getJobSettings(JobSetting... additionalSettings) {
+	if (additionalSettings.length == 0) {
+		return mJobSettings;
+	} else {
+		JobSetting[] combinedSettings = new JobSetting[additionalSettings.length + mJobSettings.length];
+		System.arraycopy(mJobSettings, 0, combinedSettings, 0, mJobSettings.length);
+		int offset = mJobSettings.length;
+		System.arraycopy(additionalSettings, 0, combinedSettings, offset, additionalSettings.length);
+		return combinedSettings;
+	}
 }
 
-public List<String> getTables() {
+List<String> getTables() {
 	return mTables;
 }
 

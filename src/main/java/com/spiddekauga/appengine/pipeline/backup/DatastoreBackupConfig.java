@@ -16,12 +16,12 @@ import java.util.List;
  * Backup configuration for datastore backups
  */
 public class DatastoreBackupConfig implements Serializable {
-private static final SimpleDateFormat DAY_FORMAT = Time.createIsoDateFormat();
+private static final SimpleDateFormat DATE_FORMAT = Time.createIsoDateFormat();
 private static final int SHARDS_PER_QUERY_DEFAULT = 5;
 private String mGcsBucketName = AppIdentityServiceFactory.getAppIdentityService().getDefaultGcsBucketName();
 private String mPrefixDirectory = "datastore_backup/";
 private List<String> mBackupTables = new ArrayList<>();
-private String mDayDirectory = DAY_FORMAT.format(new Date()) + "/";
+private String mDateDirectory = DATE_FORMAT.format(new Date()) + "/";
 private int mShardsPerQuery = SHARDS_PER_QUERY_DEFAULT;
 private MapSettings mMapSettings = null;
 private JobSetting[] mJobSettings = null;
@@ -30,8 +30,8 @@ String getGcsBucketName() {
 	return mGcsBucketName;
 }
 
-String getPrefixDirectory() {
-	return mPrefixDirectory + mDayDirectory;
+String getBackupDirectory() {
+	return mPrefixDirectory + mDateDirectory;
 }
 
 List<String> getBackupTables() {
@@ -106,10 +106,33 @@ public static class Builder {
 		}
 
 		/**
+		 * Set date directory of the backup or restore point. Automatically converts the date into a
+		 * string
+		 * @param date date-name of the directory containing a specific backup
+		 */
+		public OptionalBuilder setDateDirectory(Date date) {
+			String dateString = DATE_FORMAT.format(date);
+			mConfig.mDateDirectory = dateString + "/";
+			return this;
+		}
+
+		/**
+		 * Set date directory of the backup or restore point
+		 * @param dateDirectory directory containing a specific backup
+		 */
+		public OptionalBuilder setDateDirectory(String dateDirectory) {
+			mConfig.mDateDirectory = dateDirectory;
+			if (!dateDirectory.endsWith("/")) {
+				mConfig.mDateDirectory += "/";
+			}
+			return this;
+		}
+
+		/**
 		 * Set prefix directory. Defaults to datastore_backup/
 		 * @param directory prefix directory
 		 */
-		public OptionalBuilder setDirectory(String directory) {
+		public OptionalBuilder setPrefixDirectory(String directory) {
 			if (directory.endsWith("/")) {
 				mConfig.mPrefixDirectory = directory;
 			} else {

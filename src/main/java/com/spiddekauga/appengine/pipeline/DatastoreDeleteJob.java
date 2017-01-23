@@ -3,11 +3,16 @@ package com.spiddekauga.appengine.pipeline;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.tools.mapreduce.MapJob;
+import com.google.appengine.tools.mapreduce.MapReduceResult;
 import com.google.appengine.tools.mapreduce.MapSpecification;
 import com.google.appengine.tools.mapreduce.inputs.DatastoreInput;
+import com.google.appengine.tools.pipeline.FutureValue;
 import com.google.appengine.tools.pipeline.Job1;
 import com.google.appengine.tools.pipeline.Value;
 import com.spiddekauga.appengine.DatastoreUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Deletes all the specified tables from the datastore
@@ -15,12 +20,13 @@ import com.spiddekauga.appengine.DatastoreUtils;
 public class DatastoreDeleteJob extends Job1<Void, DatastoreJobConfig> {
 @Override
 public Value<Void> run(DatastoreJobConfig config) throws Exception {
+	List<FutureValue<MapReduceResult<Void>>> deleteJobs = new ArrayList<>(config.getTables().size());
 	// Delete tables
 	for (String table : config.getTables()) {
-		futureCall(new MapJob<>(getMapSpecification(table, config), config.getMapSettings()), config.getJobSettings());
+		deleteJobs.add(futureCall(new MapJob<>(getMapSpecification(table, config), config.getMapSettings()), config.getJobSettings()));
 	}
 
-	return immediate(null);
+	return futureCall(new WaitForJob(), futureList(deleteJobs), config.getJobSettings());
 }
 
 /**

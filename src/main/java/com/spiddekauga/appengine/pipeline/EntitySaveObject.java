@@ -41,7 +41,7 @@ public EntitySaveObject(Entity entity) {
 /**
  * Convert back to a datastore entity
  */
-public Entity createDatastoreEntity() {
+public Entity toDatastoreEntity() {
 	Entity entity = new Entity(key);
 
 	// Set properties
@@ -58,8 +58,8 @@ public Entity createDatastoreEntity() {
 	return entity;
 }
 
-public class PropertyWrapper {
-	public Object object;
-	public boolean indexed;
+public static class PropertyWrapper {
+	Object object;
+	boolean indexed;
 }
 }
